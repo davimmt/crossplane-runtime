@@ -89,6 +89,9 @@ func defaultSupportedManagementPolicies() []sets.Set[xpv1.ManagementAction] {
 		// Useful when the same external resource is managed by multiple
 		// managed resources.
 		sets.New[xpv1.ManagementAction](xpv1.ManagementActionObserve, xpv1.ManagementActionUpdate),
+		// No Observe and no Update. Just create/delete the external resource.
+		// Useful when there are throttling issues concerning the external resource's API.
+		sets.New[xpv1.ManagementAction](xpv1.ManagementActionCreate, xpv1.ManagementActionDelete),
 	}
 }
 
@@ -150,6 +153,15 @@ func (m *ManagementPoliciesResolver) ShouldCreate() bool {
 		return true
 	}
 	return m.managementPolicies.HasAny(xpv1.ManagementActionCreate, xpv1.ManagementActionAll)
+}
+
+// ShouldObserve returns true if the Observe action is allowed.
+// If the management policy feature is disabled, it returns true.
+func (m *ManagementPoliciesResolver) ShouldObserve() bool {
+	if !m.enabled {
+		return true
+	}
+	return m.managementPolicies.HasAny(xpv1.ManagementActionObserve)
 }
 
 // ShouldUpdate returns true if the Update action is allowed.

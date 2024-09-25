@@ -108,6 +108,8 @@ type ManagementPoliciesChecker interface { //nolint:interfacebloat // This has t
 	// on the management policy.
 	IsPaused() bool
 
+	// ShouldObserve returns true if the Observe action is allowed.
+	ShouldObserve() bool
 	// ShouldOnlyObserve returns true if only the Observe action is allowed.
 	ShouldOnlyObserve() bool
 	// ShouldCreate returns true if the Create action is allowed.
